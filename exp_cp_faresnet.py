@@ -11,7 +11,7 @@ from trainer import Trainer
 import utils_funcs
 import traceback
 
-parser = argparse.ArgumentParser(description='CP_ResNet Training')
+parser = argparse.ArgumentParser(description='Frequency-aware ResNet CP_FAResNet Training')
 # Optimization options
 parser.add_argument('--epochs', default=400, type=int, metavar='N',
                     help='number of total epochs to run')
@@ -21,7 +21,7 @@ parser.add_argument('--rho', default=5, type=int,
                     help='rho value as explained in DCASE2019 workshop paper '
                          '"Receptive-Field-Regularized CNN Variants for Acoustic Scene Classification"'
                          '# rho value control the MAX RF of the Network values from 5-9 corresponds max rf similar to the popular VGG-like nets.')
-# Optimization options
+# mixup options
 parser.add_argument('--mixup', default=1, type=int,
                     help='use mixup if 1. ')
 
@@ -39,21 +39,15 @@ print("The experiment tesnorboard can be accessed: tensorboard --logdir  ", tens
 print("Rho value : ", args.rho)
 print("Use Mix-up : ", args.mixup)
 
-from models.cp_resnet import get_model_based_on_rho
+from models.cp_faresnet import get_model_based_on_rho
 
 default_conf['model_config'] = get_model_based_on_rho(args.rho, config_only=True)
-
-# find the RF at the 24th layer of the model defined by this config
-# this equations are explained in:
-# The Receptive Field as a Regularizer in Deep Convolutional Neural Networks for Acoustic Scene Classification,
-# Koutini et al.
-# EUSIPCO 2019
-
 try:
     # set utils_funcs.model_config to the current model (not safe with lru)
-    utils_funcs.model_config =default_conf['model_config']
-    _,max_rf = utils_funcs.get_maxrf(24 )
-    print("For this Rho, the maximium RF is: ",max_rf)
+    utils_funcs.model_config = default_conf['model_config']
+    # Gets the MAX RF on layer 24
+    _, max_rf = utils_funcs.get_maxrf(24)
+    print("\n\nFor this Rho, the maximium RF is: ", max_rf," pixel \n\n")
 except:
     print("couldn't determine the max RF, maybe non-standard model_config")
     traceback.print_exc()

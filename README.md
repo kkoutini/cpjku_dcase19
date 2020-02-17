@@ -59,6 +59,28 @@ After installing dependencies:
      tensorboard --logdir   ./runsdir/cp_resnet/exp_Aug20_14.11.28
      ```
  The exact commmand is printed when you run the experiment script.
+
+## Example runs
+### DCASE 2019 DCASE 1A
+#### CP_ResNet
+default adapted receptive field RN1,RN1 (in Koutini2019Receptive below):
+```
+$ CUDA_VISIBLE_DEVICES=0 python exp_cp_resnet.py 
+```
+Large receptive Field
+```
+$ CUDA_VISIBLE_DEVICES=0 python exp_cp_resnet.py  --rho 15
+```
+very small max receptive Field:
+
+```
+$ CUDA_VISIBLE_DEVICES=0 python exp_cp_resnet.py  --rho 2
+```
+
+
+# Missing Features
+This repo is used to publish for our submission to DCASE 2019 and MediaEval 2019. If some feauture/architecture/dataset missing feel free to contact the authors or to open an issue.
+
 # Citation
 
 If use this repo please cite   [The Receptive Field as a Regularizer ]( https://arxiv.org/abs/1907.01803 ) ,  Receptive-Field-Regularized CNN Variants for Acoustic Scene Classification

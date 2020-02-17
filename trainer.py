@@ -74,6 +74,7 @@ class Trainer:
 
         # init multi gpu
         self.bare_model = load_model(config.model_config)
+        print(self.bare_model)
         if self.use_swa:
             self.swa_model = load_model(config.model_config)
             if self.config.use_gpu:
@@ -84,7 +85,7 @@ class Trainer:
         if self.config.use_gpu:
             self.bare_model.cuda()
 
-        shared_globals.console.info("Trainable model parameters {}, non-trainable {} ".format(
+        shared_globals.console.info("\n\nTrainable model parameters {}, non-trainable {} \n\n".format(
             count_parameters(self.bare_model), count_parameters(self.bare_model, False)))
         # DataParallel mode
         if not config.parallel_mode:

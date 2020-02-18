@@ -82,7 +82,7 @@ Download the evaluation set:
 ```bash
 $ python download_dataset.py --version 2019eval
 ```
-Download the trained models (from [zando]( https://zenodo.org/ ))
+Download the trained models (from [zando](  https://zenodo.org/record/3674034))
 
 Run the experiment with the `load` the correct `rho` value, because the `rho` value changes the network weights shape) 
 ```bash

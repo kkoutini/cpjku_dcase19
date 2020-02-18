@@ -31,16 +31,34 @@ def parser_categorical_csv(csv_file, files_col, labels_col, header=None, delimit
         y_labels = le.fit_transform(df.iloc[:, 1])
     return df.iloc[:, 0].values, y_labels, le
 
+def parser_nolabel_csv(csv_file, files_col, header=None, delimiter="\t"):
+    """
+    csv metadata parser, reads file name and labels from CSV, for evaluation sets
+
+    :param csv_file: csv_file
+    :param files_col: the column with file names
+    :param labels_col: the column with the ile labels
+    :return: files, labels, label_encoder_decoder
+    """
+
+    df = pd.read_csv(csv_file, header=header, delimiter=delimiter)
+    df = df[[df.columns[files_col]]]
+    df.columns = [0]
+
+    y_labels = np.zeros(len(df.iloc[:].values), dtype=np.long)
+    return df.iloc[:, 0].values, y_labels, None
+
 
 def get_meta_parser(parser):
     return parser_categorical_csv
+
 
 
 df_trset = None
 
 loaded_dataset = None
 label_encoder = None
-
+loaded_dataset_sub = None
 
 class DatasetsManager:
     def __init__(self, config):
@@ -48,6 +66,47 @@ class DatasetsManager:
 
     def get_dataset(self, config):
         return getattr(self, config.dataset.split(".")[1])()
+
+    def get_sub_dataset(self):
+        normalize = self.config['normalize']
+        if not normalize:
+            return self.df_get_sub_dataset()
+        # make sure norms are loaded
+        self.get_test_set()
+        print("normalized SUB dataset!")
+        ds = self.df_get_sub_dataset()
+        return PreprocessDataset(ds, norm_func)
+
+    def df_get_sub_dataset(self):
+        name, normalize, audio_path, parser, parser_args, audio_processor, cache, cache_x_name, file_cache = \
+            self.config['name'], self.config['normalize'], self.config['audio_path'], self.config['parser'], \
+            self.config[
+                'parser_args'], self.config['audio_processor'], self.config['cache'], self.config['cache_x_name'], \
+            self.config['file_cache']
+        sub_audio_path, sub_parser, sub_parser_args = self.config['sub_audio_path'],self.config['sub_parser'],\
+                                                      self.config['sub_parser_args']
+        sub_audio_path = os.path.expanduser(sub_audio_path)
+        global loaded_dataset_sub
+        global label_encoder
+        if loaded_dataset_sub is not None:
+            return loaded_dataset_sub
+
+        print("loading dataset from '{}'".format(name + "_sub"))
+
+        def getdatset():
+            meta_parser = parser_nolabel_csv
+            global label_encoder
+            files, labels, _ = meta_parser(**sub_parser_args)
+
+            return AudioPreprocessDataset(files, labels, label_encoder, sub_audio_path, audio_processor)
+
+        if cache:
+            if file_cache:
+                loaded_dataset_sub = FilesCachedDataset(getdatset, name + "_sub",
+                                                        x_name=cache_x_name + "_sub_ap_" + audio_processor)
+        else:
+            loaded_dataset_sub = getdatset()
+        return loaded_dataset_sub
 
     def get_full_dataset(self):
         name, normalize, audio_path, parser, parser_args, audio_processor, cache, cache_x_name, file_cache = \
@@ -100,7 +159,7 @@ class DatasetsManager:
     def get_test_set(self):
         normalize = self.config.normalize
         if not normalize:
-            return df_get_test_set()
+            return self.df_get_test_set()
         print("normalized test!")
         name, fold, train_files_csv, audio_processor = self.config.name, \
                                                        self.config.fold, self.config.train_files_csv, \

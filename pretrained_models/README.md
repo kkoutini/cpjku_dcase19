@@ -1,3 +1,3 @@
 # Pretrained Models
-Here you can download pretrained models
+Here you can download pretrained models for convenience. 
 

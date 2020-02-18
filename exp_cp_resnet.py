@@ -7,6 +7,7 @@ import shutil
 import time
 import random
 import json
+
 from trainer import Trainer
 import utils_funcs
 import traceback
@@ -25,10 +26,16 @@ parser.add_argument('--rho', default=5, type=int,
 parser.add_argument('--mixup', default=1, type=int,
                     help='use mixup if 1. ')
 
-args = parser.parse_args()
+parser.add_argument('--load', default=None, type=str,
+                    help='the pre-trained model path to load, in this case the model is only evaluated')
 
-with open("configs/cp_resnet.json", "r") as text_file:
-    default_conf = json.load(text_file)
+args = parser.parse_args()
+if args.load is  None:
+    with open("configs/cp_resnet.json", "r") as text_file:
+        default_conf = json.load(text_file)
+else:
+    with open("configs/cp_resnet_eval.json", "r") as text_file:
+        default_conf = json.load(text_file)
 
 default_conf['out_dir'] = default_conf['out_dir'] + str(datetime.datetime.now().strftime('%b%d_%H.%M.%S'))
 
@@ -51,9 +58,9 @@ default_conf['model_config'] = get_model_based_on_rho(args.rho, config_only=True
 
 try:
     # set utils_funcs.model_config to the current model (not safe with lru)
-    utils_funcs.model_config =default_conf['model_config']
-    _,max_rf = utils_funcs.get_maxrf(24 )
-    print("For this Rho, the maximium RF is: ",max_rf)
+    utils_funcs.model_config = default_conf['model_config']
+    _, max_rf = utils_funcs.get_maxrf(24)
+    print("For this Rho, the maximium RF is: ", max_rf)
 except:
     print("couldn't determine the max RF, maybe non-standard model_config")
     traceback.print_exc()
@@ -66,7 +73,23 @@ else:
 
 epochs = args.epochs
 trainer = Trainer(default_conf)
-trainer.fit(epochs)
-trainer.predict("last")
-trainer.load_best_model()
-trainer.predict()
+if args.load is not None:
+    model_path = args.load
+    print("will load pre-trained model from ", model_path)
+    import torch
+    from datetime import datetime
+    checkpoint = torch.load(model_path)
+    try:
+        trainer.bare_model.load_state_dict(checkpoint['state_dict'])
+    except:
+        print("\n\nFailed: to load weights check that you have the correct rho value\n\n")
+        raise
+    print("model loaded, predicting...")
+    sids, propbs = trainer.do_predict("eval",{})
+    print("sids:",len(sids),propbs.shape)
+    torch.save((sids, propbs),str(datetime.now())+"eval_predictions.pth")
+else:
+    trainer.fit(epochs)
+    trainer.predict("last")
+    trainer.load_best_model()
+    trainer.predict()

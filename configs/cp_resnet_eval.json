@@ -1,0 +1,221 @@
+{
+  "arch": "cp_resnet",
+  "audiodataset": {
+    "audio_path": "datasets/TAU-urban-acoustic-scenes-2019-development/",
+    "audio_processor": "d18_stereo",
+    "cache": true,
+    "cache_x_name": "",
+    "cv_version": null,
+    "dcace_version": null,
+    "file_cache": true,
+    "fold": 1,
+    "leaderboard_audio_path": "datasets/TAU-urban-acoustic-scenes-2019-leaderboard/",
+    "leaderboard_parser": "nolabel_csv",
+    "leaderboard_parser_args": {
+      "csv_file": "datasets/TAU-urban-acoustic-scenes-2019-leaderboard/evaluation_setup/test.csv",
+      "files_col": 0,
+      "header": 0
+    },
+    "name": "d19t1",
+    "no_resample": false,
+    "normalize": 1,
+    "num_of_classes": 10,
+    "parser": "categorical_csv",
+    "parser_args": {
+      "csv_file": "datasets/TAU-urban-acoustic-scenes-2019-development/meta.csv",
+      "files_col": 0,
+      "header": 0,
+      "labels_col": 1
+    },
+    "resize_limit": 26,
+    "resize_limit_t": 26,
+    "roll": 1,
+    "scale": false,
+    "spec_resize": false,
+    "stereo_desync": false,
+    "stereo_flip": false,
+    "sub_audio_path": "datasets/TAU-urban-acoustic-scenes-2019-evaluation/",
+    "sub_parser": "nolabel_csv",
+    "sub_parser_args": {
+      "csv_file": "datasets/TAU-urban-acoustic-scenes-2019-evaluation/evaluation_setup/test.csv",
+      "files_col": 0,
+      "header": 0
+    },
+    "subsample": false,
+    "test_files_csv": "datasets/TAU-urban-acoustic-scenes-2019-development/evaluation_setup/fold{}_evaluate.csv",
+    "train_files_csv": "datasets/TAU-urban-acoustic-scenes-2019-development/evaluation_setup/fold{}_train.csv",
+    "use_as_default_scaler": false,
+    "use_raw_spectograms": false,
+    "vertical_desync": false
+  },
+  "batch_size": 10,
+  "cmd": " ",
+  "datasets": {
+
+    "testing": {
+      "batch_config": {
+        "batch_sampler": "default",
+        "batch_size": 10
+      },
+      "dataset": "audiodataset.get_test_set",
+      "num_of_workers": 4,
+      "testing": true,
+      "training": false
+    },
+    "training": {
+      "batch_config": {
+        "batch_sampler": "default",
+        "batch_size": 10
+      },
+      "dataset": "audiodataset.get_train_set",
+      "num_of_workers": 4,
+      "training": true
+    },
+    "eval": {
+      "batch_config": {
+        "batch_sampler": "default",
+        "batch_size": 10
+      },
+      "dataset": "audiodataset.get_sub_dataset",
+      "num_of_workers": 4,
+      "testing": true,
+      "training": false
+    }
+  },
+  "dropout_factor": 0.3,
+  "epochs": 350,
+  "extra_kernal_rf": 0,
+  "extra_kernal_rf_freq": null,
+  "extra_kernal_rf_time": null,
+  "fold_out_dir": "f1_",
+  "learning_rate": 0.0001,
+  "load_model": false,
+  "loaders_num_of_workers": 20,
+  "loss_criterion": "default",
+  "loss_criterion_args": {},
+  "max_pooing_config": null,
+  "max_pooing_pos": null,
+  "mixup_alpha": 0.3,
+  "model_config": {
+    "arch": "cp_resnet",
+    "base_channels": 128,
+    "block_type": "basic",
+    "depth": 26,
+    "input_shape": [
+      10,
+      2,
+      -1,
+      -1
+    ],
+    "multi_label": false,
+    "n_classes": 10,
+    "prediction_threshold": 0.4,
+    "stage1": {
+      "k1s": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "k2s": [
+        1,
+        3,
+        3,
+        3
+      ],
+      "maxpool": [
+        1,
+        2,
+        4
+      ]
+    },
+    "stage2": {
+      "k1s": [
+        3,
+        1,
+        1,
+        1
+      ],
+      "k2s": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "maxpool": []
+    },
+    "stage3": {
+      "k1s": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "k2s": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "maxpool": []
+    },
+    "use_bn": true,
+    "weight_init": "fixup"
+  },
+  "named_config_dir": "",
+  "normalize": 1,
+  "optim_config": {
+    "base_lr": 0.0001,
+    "batch_size": 100,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "epochs": 350,
+    "lr_decay": 0.1,
+    "milestones": [
+      80,
+      120
+    ],
+    "model_selection": {
+      "lr_decay_factor": 0.5,
+      "lr_min_limit": 5e-06,
+      "metric": "loss",
+      "patience": 1000,
+      "select_min": true,
+      "validation_set": "testing"
+    },
+    "momentum": 0.9,
+    "nesterov": true,
+    "optimizer": "adam",
+    "scheduler": "linear",
+    "scheduler_args": {
+      "epochs": 250,
+      "lr_init": 0.0001,
+      "start": 50
+    },
+    "weight_decay": 0
+  },
+  "optimizer": "adam",
+  "out_dir": "./outdir/cp_resnet/exp_",
+  "parallel_mode": false,
+  "predict_only_mode": false,
+  "run_config": {
+    "event_triggers": {
+      "epoch_events": []
+    },
+    "strategy": "default",
+    "strategy_args": {
+      "some_key": "some_bal"
+    }
+  },
+  "seed": 678059793,
+  "swa_c_epochs": 3,
+  "swa_no_bn_update": false,
+  "tensorboard": true,
+  "tensorboard_no_model_graph": true,
+  "tmp_hot_fix_dcase19": null,
+  "use_gpu": true,
+  "use_mixup": true,
+  "use_swa": 250
+}

@@ -76,8 +76,20 @@ very small max receptive Field:
 ```
 $ CUDA_VISIBLE_DEVICES=0 python exp_cp_resnet.py  --rho 2
 ```
+# Loading pretrained models
 
+Download the evaluation set:
+```bash
+$ python download_dataset.py --version 2019eval
+```
+Download the trained models (from [zando]( https://zenodo.org/ ))
 
+Run the experiment with the `load` the correct `rho` value, because the `rho` value changes the network weights shape) 
+```bash
+$ CUDA_VISIBLE_DEVICES=0 python exp_cp_resnet.py  --rho 5 --load=path_to_model.pth
+```
+In case that you want to predict on a different dataset, you should add the dataset to the config file.
+For example look at the `eval` dataset in  `configs/cp_resnet_eval.json`.
 # Missing Features
 This repo is used to publish for our submission to DCASE 2019 and MediaEval 2019. If some feauture/architecture/dataset missing feel free to contact the authors or to open an issue.
 

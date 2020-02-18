@@ -23,6 +23,8 @@ datasets_map={
     "2017": "TUTAcousticScenes_2017_DevelopmentSet",
     "2018": "TUTUrbanAcousticScenes_2018_DevelopmentSet",
     "2019": "TAUUrbanAcousticScenes_2019_DevelopmentSet",
+    "2019eval": "TAUUrbanAcousticScenes_2019_EvaluationSet",
+
 }
 print("chosen dataset: ",datasets_map[args.version])
 

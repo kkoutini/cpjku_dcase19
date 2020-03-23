@@ -30,8 +30,8 @@ def processor_d18(file_path):
     spectrograms = []
     for y in sig:
 
-        # compute stft
-        stft = librosa.stft(y, n_fft=n_fft, hop_length=hop_length, win_length=None, window='hann', center=True,
+        # compute stftnp.asfortranarray(x)
+        stft = librosa.stft(np.asfortranarray(y), n_fft=n_fft, hop_length=hop_length, win_length=None, window='hann', center=True,
                             pad_mode='reflect')
 
         # keep only amplitures
@@ -82,7 +82,7 @@ def processor_d18_stereo(file_path):
     for y in sig:
 
         # compute stft
-        stft = librosa.stft(y, n_fft=n_fft, hop_length=hop_length, win_length=None, window='hann', center=True,
+        stft = librosa.stft(np.asfortranarray(y), n_fft=n_fft, hop_length=hop_length, win_length=None, window='hann', center=True,
                             pad_mode='reflect')
 
         # keep only amplitures

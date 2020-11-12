@@ -1,6 +1,6 @@
 # CP JKU Submission for DCASE 2019
 
-
+UPDATE 2020: a new version of this repo with support to more datasets and architectures has been moved to [https://github.com/kkoutini/cpjku_dcase20](https://github.com/kkoutini/cpjku_dcase20)
 
 
 ## Requirements
